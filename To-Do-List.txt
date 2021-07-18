@@ -1,10 +1,19 @@
 ﻿
+To-Do-Liste:
 
 
 
-TO DO NEXT:
+
+Bauern:
+1) Schlag-Verhalten implementieren.
+2) En Passant
+3) Rekrutierung
+
+Springer:
+1) Freundliche Figuren erkennen und berücksichtigen.
 
 
-
-1) Pawn Movement + Pawn Regeln
-2) Farben der Figuren berücksichtigen
+König:
+1) Schach-Mechanik.
+2) Pin implementieren.
+3) Matt implementieren.
