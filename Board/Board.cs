@@ -32,7 +32,6 @@ public sealed class Board : MonoBehaviour
 
         CreateGameSetup();
     }
-
     private void CreateGameSetup () {
 
         var white = false;
@@ -173,12 +172,10 @@ public sealed class Board : MonoBehaviour
         CreatePiece(PieceType.Queen, ColorField.Black, "d8");
         CreatePiece(PieceType.King, ColorField.Black, "e8");
     }
-
     private void Update() {
 
         CheatToWork();
     }
-
     private void CheatToWork () {
 
         if (Input.GetKeyDown(KeyCode.U)) {

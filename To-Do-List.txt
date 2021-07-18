@@ -1,0 +1,10 @@
+﻿
+
+
+
+TO DO NEXT:
+
+
+
+1) Pawn Movement + Pawn Regeln
+2) Farben der Figuren berücksichtigen

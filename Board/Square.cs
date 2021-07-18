@@ -42,7 +42,7 @@ public sealed class Square : MonoBehaviour
         this.validMoveHightlight.SetActive(false);
     }
     /// <summary>
-    /// Überschreibt alle notwendigen Daten und aktualisiert die Position.
+    /// Überschreibt alle notwendigen Daten und aktualisiert die Position. CalculateBoardValues wird ebenfalls aufgerufen.
     /// </summary>
     /// <param name="piece"></param>
     internal void AddSubscriber (Piece piece) {

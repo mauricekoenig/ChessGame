@@ -13,13 +13,11 @@ public sealed class Queen : Piece
 
         base.Awake();
     }
-
     public override void InitializePiece(ColorField colorField, Square square) {
 
         base.InitializePiece(colorField, square);
         LoadSprite();
     }
-
     protected override void LoadSprite() {
 
         if (this.ColorProperty == ColorField.White) {

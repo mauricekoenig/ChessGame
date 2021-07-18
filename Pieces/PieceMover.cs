@@ -12,12 +12,13 @@ public sealed class PieceMover : MonoBehaviour
     private PieceBehaviour pieceBehaviour;
     private Camera mainCam;
 
-    private List<Square> validMoves = new List<Square>();
+    [SerializeField] private List<Square> validMoves = new List<Square>();
     public bool HasPermissionToMove { get { return GameLogic.Instance.CurrentPlayer == piece.ColorProperty; } private set { } }
 
     // Inspector Helper
     public bool PERMISSION;
 
+    // REMOVE HELPER SOON
     private void Update() {
 
         PERMISSION = HasPermissionToMove;
@@ -97,6 +98,7 @@ public sealed class PieceMover : MonoBehaviour
 
                         this.piece.CurrentlySubscribedTo.RemoveSubscriber();
                         square.AddSubscriber(this.piece);
+                        InCaseOfPawnCheckForHasMovedYet(this.piece);
                         DisableDragging();
                         ResetRaycastSquare();
                         break;
@@ -110,6 +112,7 @@ public sealed class PieceMover : MonoBehaviour
                         Destroy(square.CurrentSubscriber.gameObject);
                         square.RemoveSubscriber();
                         square.AddSubscriber(this.piece);
+                        InCaseOfPawnCheckForHasMovedYet(this.piece);
                         DisableDragging();
                         ResetRaycastSquare();
                         break;
@@ -171,6 +174,14 @@ public sealed class PieceMover : MonoBehaviour
 
                 sq.DisableValidMoveHighlight();
             }
+        }
+    }
+    private void InCaseOfPawnCheckForHasMovedYet (Piece piece) {
+
+        if (piece.GetType() == typeof(Pawn)) {
+
+            var pawn = piece as Pawn;
+            pawn.hasNotMovedYet = false;
         }
     }
 

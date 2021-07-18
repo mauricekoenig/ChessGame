@@ -8,6 +8,7 @@ public sealed class Pawn : Piece
 {
     public override int Value { get; } = 1;
     public override string Name { get; } = "Pawn";
+    public bool hasNotMovedYet;
 
     protected override void Awake() {
 
@@ -17,6 +18,7 @@ public sealed class Pawn : Piece
 
         base.InitializePiece(colorField, square);
         LoadSprite();
+        hasNotMovedYet = true;
     }
     protected override void LoadSprite() {
 

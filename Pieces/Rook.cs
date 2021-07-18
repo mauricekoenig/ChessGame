@@ -7,19 +7,17 @@ using UnityEngine;
 public sealed class Rook : Piece
 {
     public override int Value { get; } = 5;
-    public override string Name { get; } = "Rook ";
+    public override string Name { get; } = "Rook";
 
     protected override void Awake() {
 
         base.Awake();
     }
-
     public override void InitializePiece(ColorField colorField, Square square) {
 
         base.InitializePiece(colorField, square);
         LoadSprite();
     }
-
     protected override void LoadSprite() {
 
         if (this.ColorProperty == ColorField.White) {
