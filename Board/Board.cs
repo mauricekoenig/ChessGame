@@ -175,13 +175,22 @@ public sealed class Board : MonoBehaviour
     }
 
     private void Update() {
-        
+
+        CheatToWork();
+    }
+
+    private void CheatToWork () {
+
         if (Input.GetKeyDown(KeyCode.U)) {
 
+            Pieces.Remove(Squares.Where(a => a.Notation == "d2").Single().CurrentSubscriber);
+            Pieces.Remove(Squares.Where(a => a.Notation == "b2").Single().CurrentSubscriber);
             Destroy(Squares.Where(a => a.Notation == "d2").Single().CurrentSubscriber.gameObject);
             Destroy(Squares.Where(a => a.Notation == "b2").Single().CurrentSubscriber.gameObject);
             Squares.Where(a => a.Notation == "d2").Single().RemoveSubscriber();
             Squares.Where(a => a.Notation == "b2").Single().RemoveSubscriber();
+            ChessUtil.CalculateBoardValues();
         }
+
     }
 }

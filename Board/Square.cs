@@ -22,7 +22,7 @@ public sealed class Square : MonoBehaviour
         this.validMoveHightlight = transform.GetChild(0).gameObject;
         validMoveHightlight.SetActive(false);
     }
-    public void InitializeSquare (Vector2 coordinates, Color32 squareColor, ColorField colorField) {
+    internal void InitializeSquare (Vector2 coordinates, Color32 squareColor, ColorField colorField) {
 
         if (initialized) return;
         this.Coordinates = coordinates;
@@ -33,16 +33,19 @@ public sealed class Square : MonoBehaviour
         this.gameObject.name = Notation;
         this.initialized = true;
     }
-
-    public void EnableValidMoveHightlight () {
+    internal void EnableValidMoveHightlight () {
 
         this.validMoveHightlight.SetActive(true);
     }
-    public void DisableValidMoveHighlight() {
+    internal void DisableValidMoveHighlight() {
 
         this.validMoveHightlight.SetActive(false);
     }
-    public void AddSubscriber (Piece piece) {
+    /// <summary>
+    /// Überschreibt alle notwendigen Daten und aktualisiert die Position.
+    /// </summary>
+    /// <param name="piece"></param>
+    internal void AddSubscriber (Piece piece) {
 
         this.CurrentSubscriber = piece;
         piece.CurrentlySubscribedTo = this;
@@ -51,7 +54,7 @@ public sealed class Square : MonoBehaviour
         piece.gameObject.name = $"{piece.ColorProperty.ToString()} {piece.Name} {this.Notation}";
         ChessUtil.CalculateBoardValues();
     }
-    public void RemoveSubscriber () {
+    internal void RemoveSubscriber () {
 
         CurrentSubscriber = null;
     }

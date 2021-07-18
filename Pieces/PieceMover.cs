@@ -8,7 +8,6 @@ public sealed class PieceMover : MonoBehaviour
 {
 
     [SerializeField] private Square square;
-    private PieceController controller;
     private Piece piece;
     private PieceBehaviour pieceBehaviour;
     private Camera mainCam;
@@ -16,13 +15,20 @@ public sealed class PieceMover : MonoBehaviour
     private List<Square> validMoves = new List<Square>();
     public bool HasPermissionToMove { get { return GameLogic.Instance.CurrentPlayer == piece.ColorProperty; } private set { } }
 
+    // Inspector Helper
+    public bool PERMISSION;
+
+    private void Update() {
+
+        PERMISSION = HasPermissionToMove;
+    }
+
     private Vector3 origin;
-    [SerializeField] private bool isDragging = false;
+    [SerializeField] private bool isDragging;
 
     private void Start () {
 
         this.mainCam = Camera.main;
-        this.controller = GetComponent<PieceController>();
         this.piece = GetComponent<Piece>();
         this.pieceBehaviour = GetComponent<PieceBehaviour>();
     }
@@ -36,6 +42,7 @@ public sealed class PieceMover : MonoBehaviour
             this.validMoves.Clear();
             this.validMoves = this.pieceBehaviour.GetValidMoves();
             ApplyIgnoreRaycastLayerToAllPieces();
+            EnableVisibilityOfPossibleMoves();
         }
     }
     internal void DragAndRaycast() {
@@ -67,9 +74,8 @@ public sealed class PieceMover : MonoBehaviour
 
                 DisableDragging();
                 SendBackToOrigin();
-                UnapplyIgnoreRaycastLayerToAllPieces();
-                return;
-            } 
+                break;
+            }  
             
             else {
 
@@ -79,32 +85,41 @@ public sealed class PieceMover : MonoBehaviour
 
                     DisableDragging();
                     SendBackToOrigin();
-                    UnapplyIgnoreRaycastLayerToAllPieces();
-                    return;
+                    ResetRaycastSquare();
+                    break;
                 } 
                 
+                // Entweder gültiges Feld oder gegnerische Figut gehittet.
                 else {
 
+                    // gültiges Feld
                     if (square.CurrentSubscriber == null) {
 
                         this.piece.CurrentlySubscribedTo.RemoveSubscriber();
                         square.AddSubscriber(this.piece);
-                        ChessUtil.CalculateBoardValues();
                         DisableDragging();
+                        ResetRaycastSquare();
+                        break;
                     }
 
+                    // gegnerische Figur
                     else if (square.CurrentSubscriber != null) {
 
+                        this.piece.CurrentlySubscribedTo.RemoveSubscriber();
                         Board.Instance.Pieces.Remove(square.CurrentSubscriber);
                         Destroy(square.CurrentSubscriber.gameObject);
                         square.RemoveSubscriber();
                         square.AddSubscriber(this.piece);
                         DisableDragging();
-                        ChessUtil.CalculateBoardValues();
+                        ResetRaycastSquare();
+                        break;
                     }
                 }
             }
         }
+
+        DisableVisibilityOfPossibleMoves();
+        UnapplyIgnoreRaycastLayerToAllPieces();
     }
 
     private void ApplyIgnoreRaycastLayerToAllPieces() {
@@ -133,6 +148,30 @@ public sealed class PieceMover : MonoBehaviour
     private void SendBackToOrigin() {
 
         this.transform.position = origin;
+    }
+    private void ResetRaycastSquare () {
+
+        square = null;
+    }
+    private void EnableVisibilityOfPossibleMoves() {
+
+        if (validMoves.Count > 0) {
+
+            foreach (var sq in validMoves) {
+
+                sq.EnableValidMoveHightlight();
+            }
+        }
+    }
+    private void DisableVisibilityOfPossibleMoves() {
+
+        if (validMoves.Count > 0) {
+
+            foreach (var sq in validMoves) {
+
+                sq.DisableValidMoveHighlight();
+            }
+        }
     }
 
 }
