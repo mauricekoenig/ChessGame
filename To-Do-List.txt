@@ -2,12 +2,12 @@
 To-Do-Liste:
 
 
-
+Sound:
+1) Dynamischen SoundManager bauen.
 
 Bauer:
-1) Schlag-Verhalten implementieren.
-2) En Passant
-3) Rekrutierung von Figuren durch Bauern
+1) En Passant
+2) Rekrutierung von Figuren durch Bauern
 
 Springer:
 1) Freundliche Figuren erkennen und berücksichtigen.
@@ -22,3 +22,8 @@ Allgemein:
 
 König:
 1) König und König dürfen sich nicht gegenüber stehen (im KingBehaviour implementieren).
+
+
+
+ERLEDIGT:
+=> Schlag-Verhalten vom Bauern implementieren

@@ -79,7 +79,6 @@ public class PawnBehaviour : PieceBehaviour
                     if (newSquare.CurrentSubscriber.ColorProperty == this.piece.ColorProperty) break;
                     if (newSquare.CurrentSubscriber.ColorProperty != this.piece.ColorProperty) {
 
-                        Debug.Log("Oben rechts wurde gecallt!");
                         validSquares.Add(newSquare);
                         break;
                     }

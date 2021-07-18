@@ -75,6 +75,7 @@ public sealed class PieceMover : MonoBehaviour
 
                 DisableDragging();
                 SendBackToOrigin();
+                ResetRaycastSquare();
                 break;
             }  
             
@@ -82,7 +83,7 @@ public sealed class PieceMover : MonoBehaviour
 
                 bool thisMoveIsValid = validMoves.Contains(square);
 
-                if (!thisMoveIsValid) {
+                if (!thisMoveIsValid) { 
 
                     DisableDragging();
                     SendBackToOrigin();
@@ -98,13 +99,13 @@ public sealed class PieceMover : MonoBehaviour
 
                         this.piece.CurrentlySubscribedTo.RemoveSubscriber();
                         square.AddSubscriber(this.piece);
-                        InCaseOfPawnCheckForHasMovedYet(this.piece);
+                        InCaseOfPawnSetFlagForHasNotMovedYetToTrue(this.piece);
                         DisableDragging();
                         ResetRaycastSquare();
                         break;
                     }
 
-                    // gegnerische Figur
+                    // gegnerische Figur wird geschlagen.
                     else if (square.CurrentSubscriber != null) {
 
                         this.piece.CurrentlySubscribedTo.RemoveSubscriber();
@@ -112,7 +113,7 @@ public sealed class PieceMover : MonoBehaviour
                         Destroy(square.CurrentSubscriber.gameObject);
                         square.RemoveSubscriber();
                         square.AddSubscriber(this.piece);
-                        InCaseOfPawnCheckForHasMovedYet(this.piece);
+                        InCaseOfPawnSetFlagForHasNotMovedYetToTrue(this.piece);
                         DisableDragging();
                         ResetRaycastSquare();
                         break;
@@ -176,7 +177,7 @@ public sealed class PieceMover : MonoBehaviour
             }
         }
     }
-    private void InCaseOfPawnCheckForHasMovedYet (Piece piece) {
+    private void InCaseOfPawnSetFlagForHasNotMovedYetToTrue (Piece piece) {
 
         if (piece.GetType() == typeof(Pawn)) {
 
