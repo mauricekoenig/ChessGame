@@ -1,8 +1,5 @@
 ﻿
 
-
-using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 
 [RequireComponent(typeof(PieceMover))]
@@ -20,15 +17,15 @@ public sealed class PieceController : MonoBehaviour
     }
     private void OnMouseDown() {
 
-        Mover.PrepareFireRay();
+        Mover.PrepareDragging();
     }
     private void OnMouseDrag() {
 
-        Mover.FireRay();
+        Mover.DragAndRaycast();
     }
     private void OnMouseUp() {
 
-        Mover.ResolveFireRay();
+        Mover.ResolveDragging();
     }
 
 }

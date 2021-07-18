@@ -7,9 +7,10 @@ using UnityEngine;
 public sealed class PieceMover : MonoBehaviour
 {
 
-    private Square raycastTarget;
+    [SerializeField] private Square square;
     private PieceController controller;
     private Piece piece;
+    private PieceBehaviour pieceBehaviour;
     private Camera mainCam;
 
     private List<Square> validMoves = new List<Square>();
@@ -20,22 +21,24 @@ public sealed class PieceMover : MonoBehaviour
 
     private void Start () {
 
-        mainCam = Camera.main;
-        controller = GetComponent<PieceController>();
-        piece = GetComponent<Piece>();
+        this.mainCam = Camera.main;
+        this.controller = GetComponent<PieceController>();
+        this.piece = GetComponent<Piece>();
+        this.pieceBehaviour = GetComponent<PieceBehaviour>();
     }
 
-    internal void PrepareFireRay() {
+    internal void PrepareDragging() {
 
         if (!isDragging && HasPermissionToMove) {
 
-            isDragging = true;
-            origin = transform.position;
-            EnableIgnoreRaycastLayerToAllPieces();
-            Debug.Log("OnMouseDown");
+            this.isDragging = true;
+            this.origin = this.transform.position;
+            this.validMoves.Clear();
+            this.validMoves = this.pieceBehaviour.GetValidMoves();
+            ApplyIgnoreRaycastLayerToAllPieces();
         }
     }
-    internal void FireRay() {
+    internal void DragAndRaycast() {
 
         if (isDragging && HasPermissionToMove) {
 
@@ -44,28 +47,74 @@ public sealed class PieceMover : MonoBehaviour
 
             if (Physics.Raycast(transform.position, Vector3.forward, out RaycastHit hit)) {
 
-                Debug.Log(hit.collider.name);
+                if (hit.collider.GetComponent<Square>()) {
+
+                    square = hit.collider.GetComponent<Square>();
+                }
+            } 
+            
+            else {
+
+                square = null;
             }
         }
     }
-    internal void ResolveFireRay() {
+    internal void ResolveDragging() {
 
         while (isDragging) {
 
-            DisableDragging();
-            SendBackToOrigin();
-            DisableIgnoreRaycastLayerToAllPieces();
+            if (square == null) {
+
+                DisableDragging();
+                SendBackToOrigin();
+                UnapplyIgnoreRaycastLayerToAllPieces();
+                return;
+            } 
+            
+            else {
+
+                bool thisMoveIsValid = validMoves.Contains(square);
+
+                if (!thisMoveIsValid) {
+
+                    DisableDragging();
+                    SendBackToOrigin();
+                    UnapplyIgnoreRaycastLayerToAllPieces();
+                    return;
+                } 
+                
+                else {
+
+                    if (square.CurrentSubscriber == null) {
+
+                        this.piece.CurrentlySubscribedTo.RemoveSubscriber();
+                        square.AddSubscriber(this.piece);
+                        ChessUtil.CalculateBoardValues();
+                        DisableDragging();
+                    }
+
+                    else if (square.CurrentSubscriber != null) {
+
+                        Board.Instance.Pieces.Remove(square.CurrentSubscriber);
+                        Destroy(square.CurrentSubscriber.gameObject);
+                        square.RemoveSubscriber();
+                        square.AddSubscriber(this.piece);
+                        DisableDragging();
+                        ChessUtil.CalculateBoardValues();
+                    }
+                }
+            }
         }
     }
 
-    private void EnableIgnoreRaycastLayerToAllPieces() {
+    private void ApplyIgnoreRaycastLayerToAllPieces() {
 
         foreach (var element in Board.Instance.Pieces.Where(x => x != piece)) {
 
             element.gameObject.layer = 2;
         }
     }
-    private void DisableIgnoreRaycastLayerToAllPieces() {
+    private void UnapplyIgnoreRaycastLayerToAllPieces() {
 
         foreach (var element in Board.Instance.Pieces.Where(x => x != piece)) {
 
@@ -85,4 +134,5 @@ public sealed class PieceMover : MonoBehaviour
 
         this.transform.position = origin;
     }
+
 }
