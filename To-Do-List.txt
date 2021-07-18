@@ -4,16 +4,21 @@ To-Do-Liste:
 
 
 
-Bauern:
+Bauer:
 1) Schlag-Verhalten implementieren.
 2) En Passant
-3) Rekrutierung
+3) Rekrutierung von Figuren durch Bauern
 
 Springer:
 1) Freundliche Figuren erkennen und berücksichtigen.
 
 
+Allgemein:
+1) Schach-Mechanik
+2) Pin
+3) Rochade (unter Berücksichtigung von Figuren, die die Felder zwischen Turm und König bedrohen)
+4) Matt
+5) Stalemate
+
 König:
-1) Schach-Mechanik.
-2) Pin implementieren.
-3) Matt implementieren.
+1) König und König dürfen sich nicht gegenüber stehen (im KingBehaviour implementieren).
