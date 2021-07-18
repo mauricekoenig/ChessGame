@@ -67,11 +67,27 @@ public sealed class PieceController : MonoBehaviour
             if (Physics.Raycast(transform.position, Vector3.forward, out RaycastHit hit)) {
 
                 raycastTarget = hit.collider.gameObject;
+                Debug.Log(hit.collider.name);
             }
 
             Debug.DrawRay(transform.position, Vector3.forward * 100);
         }
+
+        Debug.Log("OnMouseDrag");
     }
 
+    private void OnMouseUp() {
+
+        while (isDragging) {
+
+            DisableDragging();
+            SendBackToOrigin();
+
+            foreach (var element in Board.Instance.Pieces.Where(x => x != piece)) {
+
+                element.gameObject.layer = 10;
+            }
+        }
+    }
 
 }
