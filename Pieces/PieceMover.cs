@@ -67,9 +67,9 @@ public sealed class PieceMover : MonoBehaviour
             if (square == null) {
 
                 DisableDragging();
-                SendBackToOrigin();
-                ResetRaycastSquare();
-                break;
+                    SendBackToOrigin();
+                        ResetRaycastSquare();
+                            break;
             }  
             
             else {
@@ -79,26 +79,26 @@ public sealed class PieceMover : MonoBehaviour
                 if (!thisMoveIsValid) { 
 
                     DisableDragging();
-                    SendBackToOrigin();
-                    ResetRaycastSquare();
-                    break;
+                        SendBackToOrigin();
+                            ResetRaycastSquare();
+                                break;
                 } 
-                
-                // Entweder gültiges Feld oder gegnerische Figut gehittet.
+               
+
                 else {
 
                     // gültiges Feld
                     if (square.CurrentSubscriber == null) {
-
-                        this.piece.CurrentlySubscribedTo.RemoveSubscriber();
+                      this.piece.CurrentlySubscribedTo.RemoveSubscriber();
                         square.AddSubscriber(this.piece);
-
-                        InCaseOfPawnSetFlagForHasNotMovedYetToTrue(this.piece);
-                        InCaseOfPawnCheckIfPawnHasMoved2FieldsAndSetFlagToTrueWhenTheCase(this.piece);
-
-                        DisableDragging();
-                        ResetRaycastSquare();
-                        break;
+                            InCaseOfPawnSetFlagForHasNotMovedYetToFalse(this.piece);
+                            InCaseOfPawnCheckIfPawnHasMoved2FieldsAndSetFlagToTrueWhenTheCase(this.piece);
+                            InCaseOfPawnCanBeCapturedEnPassantDisableThisProperty();
+                                        DisableDragging();
+                                            ResetRaycastSquare();
+                                                 SetInternalCounter();
+                                                    GameLogic.Instance.ChangeActivePlayer(); // erhöht TurnCount ++;
+                                                        break;
                     }
 
                     // gegnerische Figur wird geschlagen.
@@ -110,11 +110,13 @@ public sealed class PieceMover : MonoBehaviour
                         square.RemoveSubscriber();
                         square.AddSubscriber(this.piece);
 
-                        InCaseOfPawnSetFlagForHasNotMovedYetToTrue(this.piece);
+                        InCaseOfPawnSetFlagForHasNotMovedYetToFalse(this.piece);
                         InCaseOfPawnCheckIfPawnHasMoved2FieldsAndSetFlagToTrueWhenTheCase(this.piece);
+                        SetInternalCounter();
 
                         DisableDragging();
                         ResetRaycastSquare();
+                        GameLogic.Instance.ChangeActivePlayer();
                         break;
                     }
                 }
@@ -176,9 +178,14 @@ public sealed class PieceMover : MonoBehaviour
             }
         }
     }
+    private void SetInternalCounter() {
+
+        this.piece.InternalCounter = 0;
+        this.piece.InternalCounter += GameLogic.Instance.TurnCounter;
+    }
 
     // Pawn specific methods.
-    private void InCaseOfPawnSetFlagForHasNotMovedYetToTrue (Piece piece) {
+    private void InCaseOfPawnSetFlagForHasNotMovedYetToFalse (Piece piece) {
 
         if (piece.GetType() == typeof(Pawn)) {
 
@@ -189,21 +196,24 @@ public sealed class PieceMover : MonoBehaviour
     private void InCaseOfPawnCheckIfPawnHasMoved2FieldsAndSetFlagToTrueWhenTheCase (Piece piece) {
 
         if (piece.GetType() == typeof(Pawn)) {
-
             var pawn = this.piece as Pawn;
-            if (pawn.hasMoved2Fields) return;
-
-            if (pawn.Coordinates.y == (this.oldCoordinates.y + 2)) {
-
-                pawn.hasMoved2Fields = true;
-                this.oldCoordinates = Vector2.zero;
+                if (pawn.hasMoved2Fields) return;
+                    if (pawn.Coordinates.y == (this.oldCoordinates.y + 2) || pawn.Coordinates.y == (this.oldCoordinates.y - 2)) {
+                        pawn.hasMoved2Fields = true;
+                         this.oldCoordinates = Vector2.zero;
             }
 
             else {
-
                 pawn.hasMoved2Fields = false;
-                this.oldCoordinates = Vector2.zero;
+                    this.oldCoordinates = Vector2.zero;
             }
+        }
+    } // Im Grunde wird für jeden Bauer nur ein einziges Mal geprüft.
+    private void InCaseOfPawnCanBeCapturedEnPassantDisableThisProperty() {
+
+        if (this.piece.GetType() == typeof(Pawn)) {
+            var pawn = this.piece as Pawn;
+                pawn.canBeCapturedEnPassant = false;
         }
     }
 
