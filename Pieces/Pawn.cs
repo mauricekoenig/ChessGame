@@ -8,7 +8,9 @@ public sealed class Pawn : Piece
 {
     public override int Value { get; } = 1;
     public override string Name { get; } = "Pawn";
-    public bool hasNotMovedYet;
+
+    public bool hasNotMovedYet = false;
+    public bool hasMoved2Fields = false;
 
     protected override void Awake() {
 
