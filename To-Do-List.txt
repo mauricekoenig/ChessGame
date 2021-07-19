@@ -1,12 +1,18 @@
 ﻿
 To-Do-Liste:
 
-
 Sound:
 1) Dynamischen SoundManager bauen.
 
 Bauer:
-1) En Passant
+1) En Passant (fertig machen - hauptsächlich TurnCounter in den Figuren implementieren um letzte Bedingung zu gewährleisten)
+			BEDINGUNGEN
+		- ist Bauer
+		- hat sich vor mir bewegt
+		- hat sich 2 Felder bewegt
+		- ich bin in der 5ten Reihe
+
+
 2) Rekrutierung von Figuren durch Bauern
 
 
