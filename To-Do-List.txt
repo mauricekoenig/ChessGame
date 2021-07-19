@@ -9,9 +9,6 @@ Bauer:
 1) En Passant
 2) Rekrutierung von Figuren durch Bauern
 
-Springer:
-1) Freundliche Figuren erkennen und berücksichtigen.
-
 
 Allgemein:
 1) Schach-Mechanik
@@ -27,3 +24,4 @@ König:
 
 ERLEDIGT:
 => Schlag-Verhalten vom Bauern implementieren
+=> Freundliche Figuren erkennen und berücksichtigen.
