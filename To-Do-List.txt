@@ -20,8 +20,3 @@ Allgemein:
 König:
 1) König und König dürfen sich nicht gegenüber stehen (im KingBehaviour implementieren).
 
-
-
-ERLEDIGT:
-=> Schlag-Verhalten vom Bauern implementieren
-=> Freundliche Figuren erkennen und berücksichtigen.
