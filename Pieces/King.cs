@@ -8,6 +8,7 @@ public sealed class King : Piece
 {
     public override int Value { get; } = 0;
     public override string Name { get; } = "King";
+    public override int InternalCounter { get; set; }
 
     protected override void Awake() {
 

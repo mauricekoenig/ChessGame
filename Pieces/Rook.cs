@@ -8,6 +8,7 @@ public sealed class Rook : Piece
 {
     public override int Value { get; } = 5;
     public override string Name { get; } = "Rook";
+    public override int InternalCounter { get; set; }
 
     protected override void Awake() {
 

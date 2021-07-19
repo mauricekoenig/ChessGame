@@ -10,6 +10,7 @@ public abstract class Piece : MonoBehaviour
     public abstract int Value { get; }
     public string Notation { get; private set; }
     public Square CurrentlySubscribedTo { get; set; }
+    public abstract int InternalCounter { get; set; }
 
     protected PieceBehaviour pieceBehaviour;
     public SpriteRenderer Sprite { get; set; }
