@@ -147,10 +147,24 @@ public class PawnBehaviour : PieceBehaviour
 
         return validSquares;
     }
-
     protected override void Start() {
 
         base.Start();
     }
+    private bool PawnIsOnFifthRank () {
 
+        if (this.piece.ColorProperty == ColorField.Black) {
+
+            if (this.piece.Coordinates.y == 4) return true;
+            else return false;
+        } 
+        
+        else if (this.piece.ColorProperty == ColorField.White) {
+
+            if (this.piece.Coordinates.y == 5) return true;
+            else return false;
+        }
+        
+        else return false;
+    }
 }
