@@ -15,17 +15,9 @@ public sealed class PieceMover : MonoBehaviour
     [SerializeField] private List<Square> validMoves = new List<Square>();
     public bool HasPermissionToMove { get { return GameLogic.Instance.CurrentPlayer == piece.ColorProperty; } private set { } }
 
-    // Inspector Helper
-    public bool PERMISSION;
-
-    // REMOVE HELPER SOON
-    private void Update() {
-
-        PERMISSION = HasPermissionToMove;
-    }
-
-    private Vector3 origin;
+    [SerializeField] private Vector3 origin;
     [SerializeField] private bool isDragging;
+    [SerializeField] private Vector2 oldCoordinates;
 
     private void Start () {
 
@@ -40,6 +32,7 @@ public sealed class PieceMover : MonoBehaviour
 
             this.isDragging = true;
             this.origin = this.transform.position;
+            this.oldCoordinates = this.piece.Coordinates;
             this.validMoves.Clear();
             this.validMoves = this.pieceBehaviour.GetValidMoves();
             ApplyIgnoreRaycastLayerToAllPieces();
@@ -99,7 +92,10 @@ public sealed class PieceMover : MonoBehaviour
 
                         this.piece.CurrentlySubscribedTo.RemoveSubscriber();
                         square.AddSubscriber(this.piece);
+
                         InCaseOfPawnSetFlagForHasNotMovedYetToTrue(this.piece);
+                        InCaseOfPawnCheckIfPawnHasMoved2FieldsAndSetFlagToTrueWhenTheCase(this.piece);
+
                         DisableDragging();
                         ResetRaycastSquare();
                         break;
@@ -113,7 +109,10 @@ public sealed class PieceMover : MonoBehaviour
                         Destroy(square.CurrentSubscriber.gameObject);
                         square.RemoveSubscriber();
                         square.AddSubscriber(this.piece);
+
                         InCaseOfPawnSetFlagForHasNotMovedYetToTrue(this.piece);
+                        InCaseOfPawnCheckIfPawnHasMoved2FieldsAndSetFlagToTrueWhenTheCase(this.piece);
+
                         DisableDragging();
                         ResetRaycastSquare();
                         break;
@@ -177,12 +176,34 @@ public sealed class PieceMover : MonoBehaviour
             }
         }
     }
+
+    // Pawn specific methods.
     private void InCaseOfPawnSetFlagForHasNotMovedYetToTrue (Piece piece) {
 
         if (piece.GetType() == typeof(Pawn)) {
 
             var pawn = piece as Pawn;
             pawn.hasNotMovedYet = false;
+        }
+    }
+    private void InCaseOfPawnCheckIfPawnHasMoved2FieldsAndSetFlagToTrueWhenTheCase (Piece piece) {
+
+        if (piece.GetType() == typeof(Pawn)) {
+
+            var pawn = this.piece as Pawn;
+            if (pawn.hasMoved2Fields) return;
+
+            if (pawn.Coordinates.y == (this.oldCoordinates.y + 2)) {
+
+                pawn.hasMoved2Fields = true;
+                this.oldCoordinates = Vector2.zero;
+            }
+
+            else {
+
+                pawn.hasMoved2Fields = false;
+                this.oldCoordinates = Vector2.zero;
+            }
         }
     }
 
