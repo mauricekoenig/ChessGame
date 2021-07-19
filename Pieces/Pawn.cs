@@ -8,9 +8,11 @@ public sealed class Pawn : Piece
 {
     public override int Value { get; } = 1;
     public override string Name { get; } = "Pawn";
+    public override int InternalCounter { get; set; }
 
     public bool hasNotMovedYet = false;
     public bool hasMoved2Fields = false;
+    public bool canBeCapturedEnPassant = false;
 
     protected override void Awake() {
 
