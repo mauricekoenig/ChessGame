@@ -2,15 +2,20 @@
 To-Do-Liste:
 
 Core
-1) Rekrutierung
-2) Schach
-3) Pin
-4) Matt
-5) Rochade
-6) Stalemate
-7) König darf König nicht gegenüberstehen
+1) Schach
+2) Pin
+3) Matt
+4) Rochade
+5) Stalemate
+6) König darf König nicht gegenüberstehen
 
 
 Miscellaneous
 1) SoundManager
 2) Netzwerk
+
+
+
+
+REFACTORING:
+1) Rekrutierung????
