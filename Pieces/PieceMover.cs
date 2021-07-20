@@ -13,7 +13,7 @@ public sealed class PieceMover : MonoBehaviour
     private Camera mainCam;
 
     [SerializeField] private List<Square> validMoves = new List<Square>();
-    public bool HasPermissionToMove { get { return GameLogic.Instance.CurrentPlayer == piece.ColorProperty; } private set { } }
+    public bool HasLocalPermissionToMove { get { return GameLogic.Instance.CurrentPlayer == piece.ColorProperty; } private set { } }
 
     [SerializeField] private Vector3 origin;
     [SerializeField] private bool isDragging;
@@ -28,7 +28,8 @@ public sealed class PieceMover : MonoBehaviour
 
     internal void PrepareDragging() {
 
-        if (!isDragging && HasPermissionToMove) {
+        if (!Security.GlobalPermission) return;
+        if (!isDragging && HasLocalPermissionToMove) {
 
             this.isDragging = true;
             this.origin = this.transform.position;
@@ -41,7 +42,7 @@ public sealed class PieceMover : MonoBehaviour
     }
     internal void DragAndRaycast() {
 
-        if (isDragging && HasPermissionToMove) {
+        if (isDragging && HasLocalPermissionToMove) {
 
             transform.position = GetWorldPosition(transform);
             Debug.DrawRay(transform.position, Vector3.forward * 100);
@@ -97,7 +98,7 @@ public sealed class PieceMover : MonoBehaviour
                                         DisableDragging();
                                             ResetRaycastSquare();
                                                  SetInternalCounter();
-                                                    GameLogic.Instance.ChangeActivePlayer(); // erhöht TurnCount ++;
+                                                    RecruitCheck(this.piece);
                                                         break;
                     }
 
@@ -216,5 +217,36 @@ public sealed class PieceMover : MonoBehaviour
                 pawn.canBeCapturedEnPassant = false;
         }
     }
+    private void RecruitCheck (Piece piece) {
 
+        if (piece.GetType() != typeof(Pawn)) {
+
+            GameLogic.Instance.ChangeActivePlayer();
+            return;
+        }
+
+        var pawn = piece as Pawn;
+
+        if (pawn.ColorProperty == ColorField.White) {
+            if (pawn.Coordinates.y == 8) {
+                Security.Lock();
+                    GameUIManager.Instance.ShowPieces(gameObject, this.piece);
+                         return;
+            }
+
+            else GameLogic.Instance.ChangeActivePlayer();
+        } 
+        
+        else if (pawn.ColorProperty == ColorField.Black) {
+            if (pawn.Coordinates.y == 1) {
+                Security.Lock();
+                    GameUIManager.Instance.ShowPieces(gameObject, this.piece);
+                        return;
+            }
+
+            else GameLogic.Instance.ChangeActivePlayer();
+        }
+
+        return;
+    }
 }
