@@ -6,11 +6,12 @@ using UnityEngine;
 namespace MauriceKoenig.ChessGame
 {
     [RequireComponent(typeof(BishopBehaviour))]
-    public sealed class Bishop : BasePiece
+    public sealed class Bishop : BasePiece, IPinnable
     {
         public override int Value { get; } = 3;
         public override string Name { get; } = "Bishop";
         public override int InternalTurnCounter { get; set; }
+        public bool IsPinned { get; set; }
 
         protected override void Awake() {
 

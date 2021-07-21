@@ -6,11 +6,12 @@ using UnityEngine;
 namespace MauriceKoenig.ChessGame
 {
     [RequireComponent(typeof(PawnBehaviour))]
-    public sealed class Pawn : BasePiece
+    public sealed class Pawn : BasePiece, IPinnable
     {
         public override int Value { get; } = 1;
         public override string Name { get; } = "Pawn";
         public override int InternalTurnCounter { get; set; }
+        public bool IsPinned { get; set; }
 
         [PawnFlag] public bool HasNotMoved { get; set; } = true;
         [PawnFlag] public bool HasMovedTwoFields { get; set; } = false;
