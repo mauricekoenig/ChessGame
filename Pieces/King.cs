@@ -12,6 +12,14 @@ namespace MauriceKoenig.ChessGame
         public override string Name { get; } = "King";
         public override int InternalTurnCounter { get; set; }
 
+        [KingFlag] public bool InCheck { get; set; } = false;
+        [KingFlag] public bool Mate { get; set; } = false;
+        [KingFlag] public bool Stalemate { get; set; } = false;
+
+        private void Start() {
+
+            Board.Instance.RegisterKing(this.ColorProperty, this);
+        }
         protected override void Awake() {
 
             base.Awake();
