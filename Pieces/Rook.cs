@@ -3,32 +3,28 @@
 
 using UnityEngine;
 
-[RequireComponent(typeof(RookBehaviour))]
-public sealed class Rook : Piece
+namespace MauriceKoenig.ChessGame
 {
-    public override int Value { get; } = 5;
-    public override string Name { get; } = "Rook";
-    public override int InternalCounter { get; set; }
+    [RequireComponent(typeof(RookBehaviour))]
+    public sealed class Rook : BasePiece
+    {
+        public override int Value { get; } = 5;
+        public override string Name { get; } = "Rook";
+        public override int InternalTurnCounter { get; set; }
 
-    protected override void Awake() {
+        protected override void Awake() {
 
-        base.Awake();
-    }
-    public override void InitializePiece(ColorField colorField, Square square) {
+            base.Awake();
+        }
+        public override void BuildPiece(ColorProperty colorField, Square square) {
 
-        base.InitializePiece(colorField, square);
-        LoadSprite();
-    }
-    protected override void LoadSprite() {
-
-        if (this.ColorProperty == ColorField.White) {
-
-            this.Sprite.sprite = Resources.Load<Sprite>("Sprites/white_rook");
-        } 
-        
-        else {
-
-            this.Sprite.sprite = Resources.Load<Sprite>("Sprites/black_rook");
+            base.BuildPiece(colorField, square);
+            GetSprite();
+        }
+        protected override void GetSprite() {
+            Renderer.sprite = ColorProperty ==
+            ColorProperty.White ? Resources.Load<Sprite>("Sprites/white_bishop") :
+            Resources.Load<Sprite>("Sprites/black_bishop");
         }
     }
 }

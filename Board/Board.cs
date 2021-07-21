@@ -4,190 +4,193 @@ using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
 
-public sealed class Board : MonoBehaviour
+namespace MauriceKoenig.ChessGame
 {
-    [Space(30)] [Header("Lists")]
-    public static Board Instance;
-    public List<Square> Squares;
-    public List<Piece> Pieces;
+    public sealed class Board : MonoBehaviour {
 
-    [Space(30)] [Header("Values On Board")]
-    public int BlackValue;
-    public int WhiteValue;
+        public static Board Instance { get; set; }
+        public List<Square> Squares;
+        public List<BasePiece> Pieces;
 
-    [Space(30)] [Header("Prefabs")]
-    [SerializeField] private GameObject pieceFab;
-    [SerializeField] private GameObject squareFab;
-    [SerializeField] private Transform squareParent;
-    [SerializeField] private Transform pieceParent;
+        public int BlackValue { get; set; }
+        public int WhiteValue { get; set; }
 
-    private void Awake() {
+        [Space(30)]
+        [Header("Prefabs")]
+        [SerializeField] private GameObject _pieceFab;
+        [SerializeField] private GameObject _squareFab;
+        [SerializeField] private Transform _squareParent;
+        [SerializeField] private Transform _pieceParent;
 
-        if (Instance == null) Instance = this;
-        else Destroy(gameObject);
+        private void Awake() {
 
-        this.Squares = new List<Square>();
-    }
-    private void Start() {
+            if (Instance == null) Instance = this;
+            else Destroy(gameObject);
 
-        CreateGameSetup();
-    }
-    private void CreateGameSetup () {
+            this.Squares = new List<Square>();
+        }
+        private void Start() {
 
-        var white = false;
+            CreateBoard();
+        }
+        private void Update() {
 
-        for (int x = 1; x <= 8; x++) {
+            TemporaryCheat();
+        }
 
-            for (int y = 1; y <= 8; y++) {
+        private void CreateBoard() {
 
-                var instance = Instantiate(squareFab, Vector3.zero, Quaternion.identity, squareParent);
-                var square = instance.GetComponent<Square>();
-                var coordinates = new Vector2(x, y);
+            var white = false;
 
-                Color32 colorCode;
-                ColorField colorField;
+            for (int x = 1; x <= 8; x++) {
 
-                Vector3 position = new Vector3((1 * x), (1 * y), 0);
-                instance.transform.position = position;
+                for (int y = 1; y <= 8; y++) {
 
-                if (white) {
+                    var instance = Instantiate(_squareFab, Vector3.zero, Quaternion.identity, _squareParent);
+                    var square = instance.GetComponent<Square>();
+                    var coordinates = new Vector2(x, y);
 
-                    colorCode = Constants.WhiteSquareColor;
-                    colorField = ColorField.White;
-                } 
-                
-                else {
+                    Color32 colorCode;
+                    ColorProperty colorField;
 
-                    colorCode = Constants.BlackSquareColor;
-                    colorField = ColorField.Black;
+                    Vector3 position = new Vector3((1 * x), (1 * y), 0);
+                    instance.transform.position = position;
+
+                    if (white) {
+
+                        colorCode = Constants.WhiteSquareColor;
+                        colorField = ColorProperty.White;
+                    } else {
+
+                        colorCode = Constants.BlackSquareColor;
+                        colorField = ColorProperty.Black;
+                    }
+
+                    square.BuildSquare(coordinates, colorCode, colorField);
+                    Squares.Add(square);
+
+                    if (y == 8) break;
+                    if (white) white = false;
+                    else white = true;
+
                 }
-
-                square.InitializeSquare(coordinates, colorCode, colorField);
-                Squares.Add(square);
-
-                if (y == 8) break;
-                if (white) white = false;
-                else white = true;
-
             }
+
+            if (Squares.Count == 64)
+                CreatePieces();
+
+            if (Pieces.Count == 32)
+                ChessUtility.CalculateBoardValues();
+
+        }
+        public void CreatePiece(PieceType pieceType, ColorProperty colorInfo, string notation) {
+
+            Square square = Squares.Where(a => a.Notation == notation).Single();
+            if (square == null) return;
+
+            var piece = Instantiate(_pieceFab, square.transform.position, Quaternion.identity, _pieceParent);
+
+            switch (pieceType) {
+
+                case PieceType.Pawn:
+                    piece.AddComponent<Pawn>();
+                    var script = piece.GetComponent<BasePiece>();
+                    script.BuildPiece(colorInfo, square);
+                    break;
+
+                case PieceType.King:
+                    piece.AddComponent<King>();
+                    var king = piece.GetComponent<BasePiece>();
+                    king.BuildPiece(colorInfo, square);
+                    break;
+
+                case PieceType.Queen:
+                    piece.AddComponent<Queen>();
+                    var queen = piece.GetComponent<BasePiece>();
+                    queen.BuildPiece(colorInfo, square);
+                    break;
+
+                case PieceType.Knight:
+                    piece.AddComponent<Knight>();
+                    var knight = piece.GetComponent<BasePiece>();
+                    knight.BuildPiece(colorInfo, square);
+                    break;
+
+                case PieceType.Bishop:
+                    piece.AddComponent<Bishop>();
+                    var bishop = piece.GetComponent<BasePiece>();
+                    bishop.BuildPiece(colorInfo, square);
+                    break;
+
+                case PieceType.Rook:
+                    piece.AddComponent<Rook>();
+                    var rook = piece.GetComponent<BasePiece>();
+                    rook.BuildPiece(colorInfo, square);
+                    break;
+            }
+            Pieces.Add(piece.GetComponent<BasePiece>());
+        }
+        private void CreatePieces() {
+
+            // white pieces
+            CreatePiece(PieceType.Pawn, ColorProperty.White, "a2");
+            CreatePiece(PieceType.Pawn, ColorProperty.White, "b2");
+            CreatePiece(PieceType.Pawn, ColorProperty.White, "c2");
+            CreatePiece(PieceType.Pawn, ColorProperty.White, "d2");
+            CreatePiece(PieceType.Pawn, ColorProperty.White, "e2");
+            CreatePiece(PieceType.Pawn, ColorProperty.White, "f2");
+            CreatePiece(PieceType.Pawn, ColorProperty.White, "g2");
+            CreatePiece(PieceType.Pawn, ColorProperty.White, "h2");
+
+            CreatePiece(PieceType.Knight, ColorProperty.White, "b1");
+            CreatePiece(PieceType.Knight, ColorProperty.White, "g1");
+
+            CreatePiece(PieceType.Bishop, ColorProperty.White, "c1");
+            CreatePiece(PieceType.Bishop, ColorProperty.White, "f1");
+
+            CreatePiece(PieceType.Rook, ColorProperty.White, "a1");
+            CreatePiece(PieceType.Rook, ColorProperty.White, "h1");
+
+            CreatePiece(PieceType.Queen, ColorProperty.White, "d1");
+            CreatePiece(PieceType.King, ColorProperty.White, "e1");
+
+            // black pieces
+            CreatePiece(PieceType.Pawn, ColorProperty.Black, "a7");
+            CreatePiece(PieceType.Pawn, ColorProperty.Black, "b7");
+            CreatePiece(PieceType.Pawn, ColorProperty.Black, "c7");
+            CreatePiece(PieceType.Pawn, ColorProperty.Black, "d7");
+            CreatePiece(PieceType.Pawn, ColorProperty.Black, "e7");
+            CreatePiece(PieceType.Pawn, ColorProperty.Black, "f4");
+            CreatePiece(PieceType.Pawn, ColorProperty.Black, "g7");
+            CreatePiece(PieceType.Pawn, ColorProperty.Black, "h7");
+
+            CreatePiece(PieceType.Knight, ColorProperty.Black, "b8");
+            CreatePiece(PieceType.Knight, ColorProperty.Black, "g8");
+
+            CreatePiece(PieceType.Bishop, ColorProperty.Black, "c8");
+            CreatePiece(PieceType.Bishop, ColorProperty.Black, "f8");
+
+            CreatePiece(PieceType.Rook, ColorProperty.Black, "a8");
+            CreatePiece(PieceType.Rook, ColorProperty.Black, "h8");
+
+            CreatePiece(PieceType.Queen, ColorProperty.Black, "d8");
+            CreatePiece(PieceType.King, ColorProperty.Black, "e8");
         }
 
-        if (Squares.Count == 64) 
-            CreateAllPieces();
+        [DebuggingTool("Remove pawns for space")] 
+        private void TemporaryCheat() {
 
-        if (Pieces.Count == 32)
-            ChessUtil.CalculateBoardValues();
+            if (Input.GetKeyDown(KeyCode.U)) {
 
-    }
-    public void CreatePiece (PieceType pieceType, ColorField colorInfo, string notation) {
+                Pieces.Remove(Squares.Where(a => a.Notation == "d2").Single().CurrentSubscriber);
+                Pieces.Remove(Squares.Where(a => a.Notation == "b2").Single().CurrentSubscriber);
+                Destroy(Squares.Where(a => a.Notation == "d2").Single().CurrentSubscriber.gameObject);
+                Destroy(Squares.Where(a => a.Notation == "b2").Single().CurrentSubscriber.gameObject);
+                Squares.Where(a => a.Notation == "d2").Single().RemoveSubscriber();
+                Squares.Where(a => a.Notation == "b2").Single().RemoveSubscriber();
+                ChessUtility.CalculateBoardValues();
+            }
 
-        Square square = Squares.Where(a => a.Notation == notation).Single();
-        if (square == null) return;
-
-        var piece = Instantiate(pieceFab, square.transform.position, Quaternion.identity, pieceParent);
-
-        switch (pieceType) {
-
-            case PieceType.Pawn:
-                piece.AddComponent<Pawn>();
-                var script = piece.GetComponent<Piece>();
-                script.InitializePiece(colorInfo, square);
-                break;
-
-            case PieceType.King:
-                piece.AddComponent<King>();
-                var king = piece.GetComponent<Piece>();
-                king.InitializePiece(colorInfo, square);
-                break;
-
-            case PieceType.Queen:
-                piece.AddComponent<Queen>();
-                var queen = piece.GetComponent<Piece>();
-                queen.InitializePiece(colorInfo, square);
-                break;
-
-            case PieceType.Knight:
-                piece.AddComponent<Knight>();
-                var knight = piece.GetComponent<Piece>();
-                knight.InitializePiece(colorInfo, square);
-                break;
-
-            case PieceType.Bishop:
-                piece.AddComponent<Bishop>();
-                var bishop = piece.GetComponent<Piece>();
-                bishop.InitializePiece(colorInfo, square);
-                break;
-
-            case PieceType.Rook:
-                piece.AddComponent<Rook>();
-                var rook = piece.GetComponent<Piece>();
-                rook.InitializePiece(colorInfo, square);
-                break;
         }
-        Pieces.Add( piece.GetComponent<Piece>() ) ;
-    }
-    private void CreateAllPieces () {
-
-        // white pieces
-        CreatePiece(PieceType.Pawn, ColorField.White, "a2");
-        CreatePiece(PieceType.Pawn, ColorField.White, "b2");
-        CreatePiece(PieceType.Pawn, ColorField.White, "c2");
-        CreatePiece(PieceType.Pawn, ColorField.White, "d2");
-        CreatePiece(PieceType.Pawn, ColorField.White, "e2");
-        CreatePiece(PieceType.Pawn, ColorField.White, "f2");
-        CreatePiece(PieceType.Pawn, ColorField.White, "g2");
-        CreatePiece(PieceType.Pawn, ColorField.White, "h2");
-
-        CreatePiece(PieceType.Knight, ColorField.White, "b1");
-        CreatePiece(PieceType.Knight, ColorField.White, "g1");
-
-        CreatePiece(PieceType.Bishop, ColorField.White, "c1");
-        CreatePiece(PieceType.Bishop, ColorField.White, "f1");
-
-        CreatePiece(PieceType.Rook, ColorField.White, "a1");
-        CreatePiece(PieceType.Rook, ColorField.White, "h1");
-
-        CreatePiece(PieceType.Queen, ColorField.White, "d1");
-        CreatePiece(PieceType.King, ColorField.White, "e1");
-
-        // black pieces
-        CreatePiece(PieceType.Pawn, ColorField.Black, "a7");
-        CreatePiece(PieceType.Pawn, ColorField.Black, "b7");
-        CreatePiece(PieceType.Pawn, ColorField.Black, "c7");
-        CreatePiece(PieceType.Pawn, ColorField.Black, "d7");
-        CreatePiece(PieceType.Pawn, ColorField.Black, "e7");
-        CreatePiece(PieceType.Pawn, ColorField.Black, "f4");
-        CreatePiece(PieceType.Pawn, ColorField.Black, "g7");
-        CreatePiece(PieceType.Pawn, ColorField.Black, "h7");
-
-        CreatePiece(PieceType.Knight, ColorField.Black, "b8");
-        CreatePiece(PieceType.Knight, ColorField.Black, "g8");
-
-        CreatePiece(PieceType.Bishop, ColorField.Black, "c8");
-        CreatePiece(PieceType.Bishop, ColorField.Black, "f8");
-
-        CreatePiece(PieceType.Rook, ColorField.Black, "a8");
-        CreatePiece(PieceType.Rook, ColorField.Black, "h8");
-
-        CreatePiece(PieceType.Queen, ColorField.Black, "d8");
-        CreatePiece(PieceType.King, ColorField.Black, "e8");
-    }
-    private void Update() {
-
-        CheatToWork();
-    }
-    private void CheatToWork () {
-
-        if (Input.GetKeyDown(KeyCode.U)) {
-
-            Pieces.Remove(Squares.Where(a => a.Notation == "d2").Single().CurrentSubscriber);
-            Pieces.Remove(Squares.Where(a => a.Notation == "b2").Single().CurrentSubscriber);
-            Destroy(Squares.Where(a => a.Notation == "d2").Single().CurrentSubscriber.gameObject);
-            Destroy(Squares.Where(a => a.Notation == "b2").Single().CurrentSubscriber.gameObject);
-            Squares.Where(a => a.Notation == "d2").Single().RemoveSubscriber();
-            Squares.Where(a => a.Notation == "b2").Single().RemoveSubscriber();
-            ChessUtil.CalculateBoardValues();
-        }
-
     }
 }

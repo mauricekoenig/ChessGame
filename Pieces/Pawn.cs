@@ -3,37 +3,31 @@
 
 using UnityEngine;
 
-[RequireComponent(typeof(PawnBehaviour))]
-public sealed class Pawn : Piece
+namespace MauriceKoenig.ChessGame
 {
-    public override int Value { get; } = 1;
-    public override string Name { get; } = "Pawn";
-    public override int InternalCounter { get; set; }
+    [RequireComponent(typeof(PawnBehaviour))]
+    public sealed class Pawn : BasePiece
+    {
+        public override int Value { get; } = 1;
+        public override string Name { get; } = "Pawn";
+        public override int InternalTurnCounter { get; set; }
 
-    public bool hasNotMovedYet = false;
-    public bool hasMoved2Fields = false;
-    public bool canBeCapturedEnPassant = false;
+        [PawnFlag] public bool HasNotMoved { get; set; } = true;
+        [PawnFlag] public bool HasMovedTwoFields { get; set; } = false;
+        [PawnFlag] public bool CanBeCapturedEnPassant { get; set; } = false;
 
-    protected override void Awake() {
-
-        base.Awake();
-    }
-    public override void InitializePiece(ColorField colorField, Square square) {
-
-        base.InitializePiece(colorField, square);
-        LoadSprite();
-        hasNotMovedYet = true;
-    }
-    protected override void LoadSprite() {
-
-        if (this.ColorProperty == ColorField.White) {
-
-            this.Sprite.sprite = Resources.Load<Sprite>("Sprites/white_pawn");
-        } 
-        
-        else {
-
-            this.Sprite.sprite = Resources.Load<Sprite>("Sprites/black_pawn");
+        protected override void Awake() {
+            base.Awake();
+        }
+        public override void BuildPiece(ColorProperty colorProperty, Square square) {
+            base.BuildPiece(colorProperty, square);
+            GetSprite();
+            HasNotMoved = true;
+        }
+        protected override void GetSprite() {
+            Renderer.sprite = ColorProperty ==
+            ColorProperty.White ? Resources.Load<Sprite>("Sprites/white_pawn") :
+            Resources.Load<Sprite>("Sprites/black_pawn");
         }
     }
 }

@@ -4,15 +4,18 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class PieceBehaviour : MonoBehaviour
+namespace MauriceKoenig.ChessGame
 {
-    protected Piece piece;
-    protected List<Square> validSquares = new List<Square>();
+    [BaseClass]
+    public abstract class PieceBehaviour : MonoBehaviour
+    {
+        protected BasePiece piece;
+        protected List<Square> validSquares = new List<Square>();
 
-    protected virtual void Start() {
+        protected virtual void Start() {
 
-        piece = GetComponent<Piece>();
+            piece = GetComponent<BasePiece>();
+        }
+        public abstract List<Square> GetValidMoves();
     }
-
-    public abstract List<Square> GetValidMoves();
 }

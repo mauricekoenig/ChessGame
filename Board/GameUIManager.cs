@@ -5,59 +5,62 @@
 using System.Diagnostics;
 using UnityEngine;
 
-
-public class GameUIManager : MonoBehaviour
+namespace MauriceKoenig.ChessGame
 {
-    public GameObject RecruitWindow { get; set; }
-    public static GameUIManager Instance;
-    public Stopwatch stopwatch = new Stopwatch();
-    public bool listenForStopwatch;
-    public Vector2 StoredCoordinates { get; set; }
-    public ColorField StoredColorField { get; set; }
-    public Piece StoredPiece { get; set; }
-    public float elapsedTime;
+    [Singleton]
+    public sealed class GameUIManager : MonoBehaviour
+    {
+        public GameObject RecruitWindow { get; set; }
+        public static GameUIManager Instance;
+        public Stopwatch Timer { get; set; }
+        public bool ListeningForStopWatch { get; set; }
+        public Vector2 StoredCoordinates { get; set; }
+        public ColorProperty StoredColorField { get; set; }
+        public BasePiece StoredPiece { get; set; }
 
-    private void Awake() {
+        [DebuggingTool("Exposes the stopwatch.")] 
+        public float elapsedTime;
 
-        if (Instance == null) Instance = this;
-        else Destroy(gameObject);
-    }
+        private void Awake() {
 
-    private void Update() {
+            if (Instance == null) Instance = this;
+            else Destroy(gameObject);
+        }
+        private void Update() {
 
-        if (listenForStopwatch) {
+            if (ListeningForStopWatch) {
 
-            elapsedTime = stopwatch.ElapsedMilliseconds / 1000;
+                elapsedTime = Timer.ElapsedMilliseconds / 1000;
 
-            if (stopwatch.ElapsedMilliseconds / 1000 >= 30) {
-                listenForStopwatch = false;
-                stopwatch.Reset();
-                DefaultRecruitBehaviour();
-                return;
+                if (Timer.ElapsedMilliseconds / 1000 >= 30) {
+                    ListeningForStopWatch = false;
+                    Timer.Reset();
+                    DefaultRecruitBehaviour();
+                    return;
+                }
             }
         }
-    }
-    private void Start() {
+        private void Start() {
 
-        if (RecruitWindow != null) return;
+            Timer = new Stopwatch();
+            if (RecruitWindow != null) return;
             RecruitWindow = Resources.Load<GameObject>("Prefabs/RecruitWindow");
+        }
+
+        public void ShowPieces(GameObject gameObj, BasePiece piece) {
+
+            RecruitWindow = Instantiate(RecruitWindow, gameObj.transform.position + new Vector3(.3f, 0, 0), Quaternion.identity);
+
+            StoredPiece = piece;
+            StoredCoordinates = piece.Coordinates;
+            StoredColorField = piece.ColorProperty;
+            RecruitWindow.SetActive(true);
+            ListeningForStopWatch = true;
+            Timer.Start();
+        }
+        private void DefaultRecruitBehaviour() {
+
+            UnityEngine.Debug.Log("Hello World!");
+        }
     }
-
-    public void ShowPieces (GameObject gameObj, Piece piece) {
-
-        RecruitWindow = Instantiate(RecruitWindow, gameObj.transform.position + new Vector3(.3f, 0, 0), Quaternion.identity);
-
-         StoredPiece = piece;
-         StoredCoordinates = piece.Coordinates;
-         StoredColorField = piece.ColorProperty;
-              RecruitWindow.SetActive(true);
-                listenForStopwatch = true;
-                        stopwatch.Start();
-    }
-
-    private void DefaultRecruitBehaviour() {
-
-        UnityEngine.Debug.Log("Hello World!");
-    }
-
 }

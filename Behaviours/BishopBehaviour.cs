@@ -2,107 +2,108 @@
 
 using System.Collections.Generic;
 using System.Linq;
-using UnityEngine;
 
-public class BishopBehaviour : PieceBehaviour
+namespace MauriceKoenig.ChessGame
 {
-    protected override void Start() {
+    public sealed class BishopBehaviour : PieceBehaviour
+    {
+        protected override void Start() {
 
-        base.Start();
-    }
-
-    public override List<Square> GetValidMoves() {
-
-        validSquares.Clear();
-
-        // top-right
-        var temp = this.piece.Coordinates;
-        while (temp.x < 8 && temp.y < 8) {
-
-            temp.x++; temp.y++;
-            var next = Board.Instance.Squares.Where(x => x.Coordinates == temp);
-            if (next.Count() == 0) break;
-            var newSquare = next.Single();
-
-            // Subscriber exists.
-            if (newSquare.CurrentSubscriber != null) {
-
-                if (newSquare.CurrentSubscriber.ColorProperty == this.piece.ColorProperty) break;
-                if (newSquare.CurrentSubscriber.ColorProperty != this.piece.ColorProperty) {
-
-                    validSquares.Add(newSquare);
-                    break;
-                }
-            }
-            validSquares.Add(newSquare);
+            base.Start();
         }
+        public override List<Square> GetValidMoves() {
 
-        // bottom-right
-        temp = this.piece.Coordinates;
-        while (temp.x < 8 && temp.y > 1) {
+            validSquares.Clear();
 
-            temp.x++; temp.y--;
-            var next = Board.Instance.Squares.Where(x => x.Coordinates == temp);
-            if (next.Count() == 0) break;
-            var newSquare = next.Single();
+            // top-right
+            var temp = this.piece.Coordinates;
+            while (temp.x < 8 && temp.y < 8) {
 
-            // Subscriber exists.
-            if (newSquare.CurrentSubscriber != null) {
+                temp.x++; temp.y++;
+                var next = Board.Instance.Squares.Where(x => x.Coordinates == temp);
+                if (next.Count() == 0) break;
+                var newSquare = next.Single();
 
-                if (newSquare.CurrentSubscriber.ColorProperty == this.piece.ColorProperty) break;
-                if (newSquare.CurrentSubscriber.ColorProperty != this.piece.ColorProperty) {
+                // Subscriber exists.
+                if (newSquare.CurrentSubscriber != null) {
 
-                    validSquares.Add(newSquare);
-                    break;
+                    if (newSquare.CurrentSubscriber.ColorProperty == this.piece.ColorProperty) break;
+                    if (newSquare.CurrentSubscriber.ColorProperty != this.piece.ColorProperty) {
+
+                        validSquares.Add(newSquare);
+                        break;
+                    }
                 }
+                validSquares.Add(newSquare);
             }
-            validSquares.Add(newSquare);
-        }
 
-        // top-left 
-        temp = this.piece.Coordinates;
-        while (temp.x > 1 && temp.y < 8) {
+            // bottom-right
+            temp = this.piece.Coordinates;
+            while (temp.x < 8 && temp.y > 1) {
 
-            temp.y++; temp.x--;
-            var next = Board.Instance.Squares.Where(x => x.Coordinates == temp);
-            if (next.Count() == 0) break;
-            var newSquare = next.Single();
+                temp.x++; temp.y--;
+                var next = Board.Instance.Squares.Where(x => x.Coordinates == temp);
+                if (next.Count() == 0) break;
+                var newSquare = next.Single();
 
-            // Subscriber exists.
-            if (newSquare.CurrentSubscriber != null) {
+                // Subscriber exists.
+                if (newSquare.CurrentSubscriber != null) {
 
-                if (newSquare.CurrentSubscriber.ColorProperty == this.piece.ColorProperty) break;
-                if (newSquare.CurrentSubscriber.ColorProperty != this.piece.ColorProperty) {
+                    if (newSquare.CurrentSubscriber.ColorProperty == this.piece.ColorProperty) break;
+                    if (newSquare.CurrentSubscriber.ColorProperty != this.piece.ColorProperty) {
 
-                    validSquares.Add(newSquare);
-                    break;
+                        validSquares.Add(newSquare);
+                        break;
+                    }
                 }
+                validSquares.Add(newSquare);
             }
-            validSquares.Add(newSquare);
-        }
 
-        // bottom-left
-        temp = this.piece.Coordinates;
-        while (temp.y > 1 && temp.x > 1) {
+            // top-left 
+            temp = this.piece.Coordinates;
+            while (temp.x > 1 && temp.y < 8) {
 
-            temp.y--; temp.x--;
-            var next = Board.Instance.Squares.Where(x => x.Coordinates == temp);
-            if (next.Count() == 0) break;
-            var newSquare = next.Single();
+                temp.y++; temp.x--;
+                var next = Board.Instance.Squares.Where(x => x.Coordinates == temp);
+                if (next.Count() == 0) break;
+                var newSquare = next.Single();
 
-            // Subscriber exists.
-            if (newSquare.CurrentSubscriber != null) {
+                // Subscriber exists.
+                if (newSquare.CurrentSubscriber != null) {
 
-                if (newSquare.CurrentSubscriber.ColorProperty == this.piece.ColorProperty) break;
-                if (newSquare.CurrentSubscriber.ColorProperty != this.piece.ColorProperty) {
+                    if (newSquare.CurrentSubscriber.ColorProperty == this.piece.ColorProperty) break;
+                    if (newSquare.CurrentSubscriber.ColorProperty != this.piece.ColorProperty) {
 
-                    validSquares.Add(newSquare);
-                    break;
+                        validSquares.Add(newSquare);
+                        break;
+                    }
                 }
+                validSquares.Add(newSquare);
             }
-            validSquares.Add(newSquare);
-        }
 
-        return this.validSquares;
+            // bottom-left
+            temp = this.piece.Coordinates;
+            while (temp.y > 1 && temp.x > 1) {
+
+                temp.y--; temp.x--;
+                var next = Board.Instance.Squares.Where(x => x.Coordinates == temp);
+                if (next.Count() == 0) break;
+                var newSquare = next.Single();
+
+                // Subscriber exists.
+                if (newSquare.CurrentSubscriber != null) {
+
+                    if (newSquare.CurrentSubscriber.ColorProperty == this.piece.ColorProperty) break;
+                    if (newSquare.CurrentSubscriber.ColorProperty != this.piece.ColorProperty) {
+
+                        validSquares.Add(newSquare);
+                        break;
+                    }
+                }
+                validSquares.Add(newSquare);
+            }
+
+            return this.validSquares;
+        }
     }
 }
