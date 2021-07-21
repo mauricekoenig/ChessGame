@@ -13,10 +13,11 @@ namespace MauriceKoenig.ChessGame
         public GameObject RecruitWindow { get; set; }
         public static GameUIManager Instance;
         public Stopwatch Timer { get; set; }
-        public bool ListeningForStopWatch { get; set; }
-        public Vector2 StoredCoordinates { get; set; }
-        public ColorProperty StoredColorField { get; set; }
-        public BasePiece StoredPiece { get; set; }
+        private bool ListeningForStopWatch { get; set; }
+
+        [CacheProperty] public Vector2 StoredCoordinates { get; set; }
+        [CacheProperty] public ColorProperty StoredColorField { get; set; }
+        [CacheProperty] public BasePiece StoredPiece { get; set; }
 
         [DebuggingTool("Exposes the stopwatch.")] 
         public float elapsedTime;
@@ -46,7 +47,6 @@ namespace MauriceKoenig.ChessGame
             if (RecruitWindow != null) return;
             RecruitWindow = Resources.Load<GameObject>("Prefabs/RecruitWindow");
         }
-
         public void ShowPieces(GameObject gameObj, BasePiece piece) {
 
             RecruitWindow = Instantiate(RecruitWindow, gameObj.transform.position + new Vector3(.3f, 0, 0), Quaternion.identity);
