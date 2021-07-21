@@ -7,7 +7,6 @@ namespace MauriceKoenig.ChessGame
 {
     public sealed class KnightBehaviour : PieceBehaviour
     {
-
         public override List<Square> GetValidMoves() {
 
             validSquares.Clear();
