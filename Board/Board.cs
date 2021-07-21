@@ -15,6 +15,9 @@ namespace MauriceKoenig.ChessGame
         public int BlackValue { get; set; }
         public int WhiteValue { get; set; }
 
+        [KingFlag] public King WhiteKing { get; private set; }
+        [KingFlag] public King BlackKing { get; private set; }
+
         [Space(30)]
         [Header("Prefabs")]
         [SerializeField] private GameObject _pieceFab;
@@ -191,6 +194,56 @@ namespace MauriceKoenig.ChessGame
                 ChessUtility.CalculateBoardValues();
             }
 
+        }
+
+        [KingFlag]
+        public void RegisterKing(ColorProperty colorProperty, King king) {
+
+            if (colorProperty == ColorProperty.Black) BlackKing = king;
+            else if (colorProperty == ColorProperty.White) WhiteKing = king;
+            else return;
+        }
+
+        [KingFlag]
+        public bool PieceIsPinned (BasePiece basePiece) {
+
+            if (basePiece.Name == "King") return false;
+            var currentSquare = basePiece.UnderlyingSquare;
+            currentSquare.RemoveSubscriber();
+
+            if (KingIsChecked(basePiece.ColorProperty)) {
+                basePiece.UnderlyingSquare.SetSubscriber(basePiece);
+                return true;
+            } 
+
+            else {
+                basePiece.UnderlyingSquare.SetSubscriber(basePiece);
+                return false;
+            }
+        }
+
+        [KingFlag]
+        public bool KingIsChecked (ColorProperty colorProperty) {
+
+            if (colorProperty == ColorProperty.White) {
+                var blackSequence = Pieces.Where(b => b.ColorProperty == ColorProperty.Black).ToList();
+                for (int i = 0; i < blackSequence.Count; i++) {
+                    var moves = blackSequence[i].GetBehaviour().GetValidMoves();
+                    if (moves.Contains(WhiteKing.UnderlyingSquare))
+                        return true;
+                }
+            } 
+            
+            else if (colorProperty == ColorProperty.Black) {
+                var whiteSequence = Pieces.Where(w => w.ColorProperty == ColorProperty.White).ToList();
+                for (int i = 0; i < whiteSequence.Count; i++) {
+                    var moves = whiteSequence[i].GetBehaviour().GetValidMoves();
+                    if (moves.Contains(BlackKing.UnderlyingSquare))
+                        return true;
+                }
+            }
+
+            return false;
         }
     }
 }
