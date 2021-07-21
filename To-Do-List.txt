@@ -1,8 +1,20 @@
 ﻿
 To-Do-Liste:
 
-EN PASSANT MUSS GEFIXT WERDEN! + KORREKTE SPRITE VERLINKUNGEN.
 
+
+Heute gearbeitet an:
+
+1) Schach eingeführt. Korrigieren / Feinschliff. Darüber nachdenken.
+
+2) Pins funktionieren bedingt. Wenn die Figur selbst die gepinnte
+	Figur ist, kann sie sich auch nicht bewegen, obwohl sie den Angreifer
+	schlagen könnte. Muss gefixt werden!
+
+
+
+
+EN PASSANT MUSS GEFIXT WERDEN!
 Core
 1) Schach
 2) Pin
