@@ -59,5 +59,18 @@ namespace MauriceKoenig.ChessGame
 
             CurrentSubscriber = null;
         }
+
+
+        /// <summary>
+        /// Leichte Methode um Figuren nach dem Pin-Check wieder an ihre ursprüngliche Position
+        /// zu bringen, ohne die gesamte "AddSubscriber"-Logik auszuführen, da Figur nur
+        /// temporär entfernt wurde.
+        /// </summary>
+        /// <param name="piece"></param>
+        [KingFlag]
+        public void SetSubscriber(BasePiece piece) {
+            if (CurrentSubscriber == null) CurrentSubscriber = piece;
+            else return;
+        }
     }
 }
