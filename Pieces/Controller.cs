@@ -7,27 +7,23 @@ namespace MauriceKoenig.ChessGame {
     [RequireComponent(typeof(Mover))]
     public sealed class Controller : MonoBehaviour
     {
-        private BasePiece Piece { get; set; } // noch nicht benutzt?
-        private Mover PieceMover { get; set; }
+        private Mover LocalMover { get; set; }
 
         private void Start() {
 
-            Piece = GetComponent<BasePiece>();
-            PieceMover = GetComponent<Mover>();
+            LocalMover = GetComponent<Mover>();
         }
-
         private void OnMouseDown() {
 
-            PieceMover.PrepareMovement();
+            LocalMover.PrepareMovement();
         }
         private void OnMouseDrag() {
 
-            PieceMover.ExecuteMovement();
+            LocalMover.ExecuteMovement();
         }
         private void OnMouseUp() {
 
-            PieceMover.AnalyseMovement();
+            LocalMover.AnalyseMovement();
         }
-
     }
 }
