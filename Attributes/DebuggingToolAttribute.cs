@@ -8,8 +8,7 @@ namespace MauriceKoenig.ChessGame
     [AttributeUsage(AttributeTargets.All)]
     public sealed class DebuggingToolAttribute : Attribute
     {
-        public string Comment { get; set; }
-
+        public string Comment { get; }
         public DebuggingToolAttribute() {
 
         }
