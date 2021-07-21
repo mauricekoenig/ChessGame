@@ -15,7 +15,9 @@ namespace MauriceKoenig.ChessGame
         private bool IsDragging { get; set; }
         private List<Square> _validMoves = new List<Square>();
         private bool LocalPermission => GameManager.Instance.CurrentPlayer == Piece.ColorProperty;
-        [SerializeField] private Square Scan { get; set; }
+
+        [SerializeField] 
+        private Square Scan { get; set; }
 
         private void Start() {
 
@@ -25,9 +27,13 @@ namespace MauriceKoenig.ChessGame
         }
         public void PrepareMovement() {
 
+            if (Board.Instance.PieceIsPinned(this.Piece)) {
+                Debug.Log("Piece is pinned!");
+                return;
+            }
             if (!Security.GlobalPermission) return;
             if (!IsDragging && LocalPermission) {
-
+                
                 this.IsDragging = true;
                 this.Origin = this.transform.position;
                 this.ComparisonCoordinates = this.Piece.Coordinates;
@@ -59,7 +65,9 @@ namespace MauriceKoenig.ChessGame
                     SendBackOrigin();
                     ResetRaycast();
                     break;
-                } else {
+                } 
+                
+                else {
 
                     var MoveIsValid = _validMoves.Contains(Scan);
 
@@ -68,33 +76,43 @@ namespace MauriceKoenig.ChessGame
                         SendBackOrigin();
                         ResetRaycast();
                         break;
-                    } else {
+                    }
+                    
+                    else {
 
                         if (Scan.CurrentSubscriber == null) {
                             Piece.UnderlyingSquare.RemoveSubscriber();
                             Scan.AddSubscriber(Piece);
 
+                            ///////////////////////////////////
                             PawnFlag_HasMovedAlready(Piece);
                             PawnFlag_MovedTwoSquares(Piece);
                             PawnFlag_DisableEnPassantProperty();
                             PawnFlag_Recruitment(Piece);
+                            ///////////////////////////////////
 
                             ResetRaycast();
                             DisableDraggingFlag();
                             SetInternalPieceCounter();
+                            KingFlag_CheckForChecks(Piece.ColorProperty);
                             break;
-                        } else if (Scan.CurrentSubscriber != null) {
+                        } 
+                        
+                        else if (Scan.CurrentSubscriber != null) {
 
                             Capture(Scan, Piece);
 
+                            ///////////////////////////////////
                             PawnFlag_HasMovedAlready(Piece);
                             PawnFlag_MovedTwoSquares(Piece);
                             PawnFlag_DisableEnPassantProperty();
                             PawnFlag_Recruitment(Piece);
-
+                            ///////////////////////////////////
+                            
                             ResetRaycast();
                             DisableDraggingFlag();
                             SetInternalPieceCounter();
+                            KingFlag_CheckForChecks(Piece.ColorProperty);
                             break;
                         }
                     }
@@ -104,6 +122,7 @@ namespace MauriceKoenig.ChessGame
             DisableHighlighting();
             EnableRaycastProperty();
         }
+
         private void Capture(Square square, BasePiece piece) {
 
             piece.UnderlyingSquare.RemoveSubscriber();
@@ -169,8 +188,31 @@ namespace MauriceKoenig.ChessGame
             return desiredPosition;
         }
 
-        [PawnFlag] private Vector2 ComparisonCoordinates { get; set; }
-        [PawnFlag] private void PawnFlag_HasMovedAlready(BasePiece piece) {
+        [KingFlag]
+        private bool KingFlag_CheckForChecks (ColorProperty colorProperty) {
+
+            if (colorProperty == ColorProperty.White) {
+                if (Board.Instance.KingIsChecked(colorProperty)) {
+                    Debug.Log("The white king is checked!");
+                        return true;
+                }           else return false;
+            }
+            
+            else if (colorProperty == ColorProperty.Black) {
+                if (Board.Instance.KingIsChecked(colorProperty)) {
+                        Debug.Log("The black king is checked!");
+                            return true;
+                }               else return false;
+            } 
+            
+            else return false;
+        }
+
+        [PawnFlag] 
+        private Vector2 ComparisonCoordinates { get; set; }
+
+        [PawnFlag] 
+        private void PawnFlag_HasMovedAlready(BasePiece piece) {
 
             if (piece.GetType() == typeof(Pawn)) {
 
@@ -178,7 +220,9 @@ namespace MauriceKoenig.ChessGame
                 pawn.HasNotMoved = false;
             }
         }
-        [PawnFlag] private void PawnFlag_MovedTwoSquares(BasePiece piece) {
+
+        [PawnFlag] 
+        private void PawnFlag_MovedTwoSquares(BasePiece piece) {
 
             if (piece.GetType() == typeof(Pawn)) {
                 var pawn = this.Piece as Pawn;
@@ -192,13 +236,16 @@ namespace MauriceKoenig.ChessGame
                 }
             }
         }
-        [PawnFlag] private void PawnFlag_DisableEnPassantProperty() {
+
+        [PawnFlag] 
+        private void PawnFlag_DisableEnPassantProperty() {
 
             if (this.Piece.GetType() == typeof(Pawn)) {
                 var pawn = this.Piece as Pawn;
                 pawn.CanBeCapturedEnPassant = false;
             }
         }
+
         [PawnFlag] private void PawnFlag_Recruitment(BasePiece piece) {
 
             if (piece.GetType() != typeof(Pawn)) {
