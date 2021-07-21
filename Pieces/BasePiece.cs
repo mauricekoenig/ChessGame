@@ -34,5 +34,9 @@ namespace MauriceKoenig.ChessGame
             this.gameObject.name = $"{this.ColorProperty.ToString()} {this.Name} {this.Notation}";
             square.AddSubscriber(this);
         }
+        public PieceBehaviour GetBehaviour() {
+
+            return Behaviour;
+        }
     }
 }
