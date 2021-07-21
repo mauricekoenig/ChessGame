@@ -7,7 +7,7 @@ using UnityEngine.UI;
 namespace MauriceKoenig.ChessGame
 {
     [PawnFlag]
-    public sealed class RecruitActivator : MonoBehaviour
+    public sealed class Recruitment : MonoBehaviour
     {
         [SerializeField] 
         private PieceType pieceType;
