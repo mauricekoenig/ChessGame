@@ -6,11 +6,12 @@ using UnityEngine;
 namespace MauriceKoenig.ChessGame
 {
     [RequireComponent(typeof(RookBehaviour))]
-    public sealed class Rook : BasePiece
+    public sealed class Rook : BasePiece, IPinnable
     {
         public override int Value { get; } = 5;
         public override string Name { get; } = "Rook";
         public override int InternalTurnCounter { get; set; }
+        public bool IsPinned { get; set; }
 
         protected override void Awake() {
 
@@ -23,8 +24,8 @@ namespace MauriceKoenig.ChessGame
         }
         protected override void GetSprite() {
             Renderer.sprite = ColorProperty ==
-            ColorProperty.White ? Resources.Load<Sprite>("Sprites/white_bishop") :
-            Resources.Load<Sprite>("Sprites/black_bishop");
+            ColorProperty.White ? Resources.Load<Sprite>("Sprites/white_rook") :
+            Resources.Load<Sprite>("Sprites/black_rook");
         }
     }
 }
