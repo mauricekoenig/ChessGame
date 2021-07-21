@@ -1,6 +1,8 @@
 ﻿
 To-Do-Liste:
 
+EN PASSANT MUSS GEFIXT WERDEN! + KORREKTE SPRITE VERLINKUNGEN.
+
 Core
 1) Schach
 2) Pin
@@ -13,9 +15,3 @@ Core
 Miscellaneous
 1) SoundManager
 2) Netzwerk
-
-
-
-
-REFACTORING:
-1) Rekrutierung????
