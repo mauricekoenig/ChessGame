@@ -5,16 +5,19 @@ To-Do-Liste:
 
 Heute gearbeitet an:
 
-1) Schach eingeführt. Korrigieren / Feinschliff. Darüber nachdenken.
 
+Pin-Information in ein Objekt encapsulated. Punkte von neulich müssen noch überarbeitet werden.
+Dennoch ist das neue Konzept vielversprechender
+
+
+STILL TO DO:
+1) Schach eingeführt. Korrigieren / Feinschliff. Darüber nachdenken.
 2) Pins funktionieren bedingt. Wenn die Figur selbst die gepinnte
 	Figur ist, kann sie sich auch nicht bewegen, obwohl sie den Angreifer
 	schlagen könnte. Muss gefixt werden!
 
-
-
-
 EN PASSANT MUSS GEFIXT WERDEN!
+
 Core
 1) Schach
 2) Pin
