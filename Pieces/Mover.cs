@@ -16,6 +16,9 @@ namespace MauriceKoenig.ChessGame
         private List<Square> _validMoves = new List<Square>();
         private bool LocalPermission => GameManager.Instance.CurrentPlayer == Piece.ColorProperty;
 
+        [CacheProperty]
+        public PinDataObject CurrentPinData { get; set; }
+
         [SerializeField] 
         private Square Scan { get; set; }
 
@@ -27,18 +30,27 @@ namespace MauriceKoenig.ChessGame
         }
         public void PrepareMovement() {
 
-            if (Board.Instance.PieceIsPinned(this.Piece)) {
-                Debug.Log("Piece is pinned!");
-                return;
-            }
             if (!Security.GlobalPermission) return;
-            if (!IsDragging && LocalPermission) {
+            CurrentPinData = Board.Instance.GetPinData(Piece);
+            if (CurrentPinData.IsPinned && !CurrentPinData.CanCaptureAttacker) return;
+            if (!IsDragging && LocalPermission && !CurrentPinData.IsPinned) {
                 
                 this.IsDragging = true;
                 this.Origin = this.transform.position;
                 this.ComparisonCoordinates = this.Piece.Coordinates;
                 this._validMoves.Clear();
                 this._validMoves = this.Behaviour.GetValidMoves();
+
+                DisableRaycastProperty();
+                EnableHighlighting();
+            }
+            else if (!IsDragging && LocalPermission && CurrentPinData.IsPinned) {
+
+                this.IsDragging = true;
+                this.Origin = this.transform.position;
+                this.ComparisonCoordinates = this.Piece.Coordinates;
+                this._validMoves.Clear();
+                this._validMoves = CurrentPinData.OptionalMoves;
 
                 DisableRaycastProperty();
                 EnableHighlighting();
@@ -81,6 +93,7 @@ namespace MauriceKoenig.ChessGame
                     else {
 
                         if (Scan.CurrentSubscriber == null) {
+
                             Piece.UnderlyingSquare.RemoveSubscriber();
                             Scan.AddSubscriber(Piece);
 
