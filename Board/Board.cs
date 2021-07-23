@@ -205,21 +205,42 @@ namespace MauriceKoenig.ChessGame
         }
 
         [KingFlag]
-        public bool PieceIsPinned (BasePiece basePiece) {
+        public PinDataObject GetPinData (BasePiece basePiece) {
 
-            if (basePiece.Name == "King") return false;
-            var currentSquare = basePiece.UnderlyingSquare;
-            currentSquare.RemoveSubscriber();
+            Square uls = basePiece.UnderlyingSquare;
+            basePiece.UnderlyingSquare.RemoveSubscriber();
+            List<Square> moves = new List<Square>();
+            List<Square> validPinnedSquares = new List<Square>();
 
-            if (KingIsChecked(basePiece.ColorProperty)) {
-                basePiece.UnderlyingSquare.SetSubscriber(basePiece);
-                return true;
-            } 
+            bool IsPinned = false;
+            bool CanCapture = false; // ??????????
+            BasePiece attacker = null;
 
-            else {
-                basePiece.UnderlyingSquare.SetSubscriber(basePiece);
-                return false;
+            var enemyColor = basePiece.ColorProperty == ColorProperty.White ? ColorProperty.Black : ColorProperty.White;
+            var pieces = Pieces.Where(x => x.ColorProperty == enemyColor).ToArray();
+            var king = enemyColor == ColorProperty.White ? BlackKing : WhiteKing;
+
+            for (int i = 0; i < pieces.Length; i++) {
+
+                moves = pieces[i].GetBehaviour().GetValidMoves();
+
+                if (moves.Contains(king.UnderlyingSquare)) {
+
+                    attacker = pieces[i];
+                    IsPinned = true;
+
+                    validPinnedSquares = InternalPinHelper.GetPinnedSquares(basePiece, attacker.UnderlyingSquare);
+
+                    if (validPinnedSquares.Count() > 0) {
+
+                        CanCapture = true;
+                        break;
+                    }
+                }
             }
+
+            return new PinDataObject(IsPinned, CanCapture, attacker, validPinnedSquares);
+
         }
 
         [KingFlag]
@@ -245,5 +266,149 @@ namespace MauriceKoenig.ChessGame
 
             return false;
         }
+
+        private static class InternalPinHelper
+        {
+            public static List<Square> GetPinnedSquares (BasePiece piece, Square target) {
+
+                List<Square> validSquares = new List<Square>();
+
+                if (piece.GetType() == typeof(Bishop)) {
+
+                    // top-right
+                    var temp = piece.Coordinates;
+                    while (temp.x < 8 && temp.y < 8) {
+
+                        temp.x++; temp.y++;
+                        var next = Board.Instance.Squares.Where(x => x.Coordinates == temp);
+                        if (next.Count() == 0) break;
+                        var newSquare = next.Single();
+
+                        if (newSquare.CurrentSubscriber == null) {
+
+                            validSquares.Add(newSquare);
+                            continue;
+                        }
+
+                        else if (newSquare.CurrentSubscriber != null && newSquare.CurrentSubscriber != target.CurrentSubscriber) {
+
+                            break;
+                        }
+
+                        if (newSquare == target) {
+
+                            validSquares.Add(newSquare);
+                            return validSquares;
+                        }
+                        
+                    }
+
+                    validSquares.Clear();
+
+                    // bottom-right
+                    temp = piece.Coordinates;
+                    while (temp.x < 8 && temp.y > 1) {
+
+                        temp.x++; temp.y--;
+                        var next = Board.Instance.Squares.Where(x => x.Coordinates == temp);
+                        if (next.Count() == 0) break;
+                        var newSquare = next.Single();
+
+                        if (newSquare.CurrentSubscriber == null) {
+
+                            validSquares.Add(newSquare);
+                            continue;
+                        } 
+                        
+                        else if (newSquare.CurrentSubscriber != null && newSquare.CurrentSubscriber != target.CurrentSubscriber) {
+
+                            break;
+                        }
+
+                        if (newSquare == target) {
+
+                            validSquares.Add(newSquare);
+                            return validSquares;
+                        }
+                    }
+
+                    validSquares.Clear();
+                    // top-left 
+                    temp = piece.Coordinates;
+                    while (temp.x > 1 && temp.y < 8) {
+
+                        temp.y++; temp.x--;
+                        var next = Board.Instance.Squares.Where(x => x.Coordinates == temp);
+                        if (next.Count() == 0) break;
+                        var newSquare = next.Single();
+
+                        if (newSquare.CurrentSubscriber == null) {
+
+                            validSquares.Add(newSquare);
+                            continue;
+                        }
+                        
+                        else if (newSquare.CurrentSubscriber != null && newSquare.CurrentSubscriber != target.CurrentSubscriber) {
+
+                            break;
+                        }
+
+                        if (newSquare == target) {
+
+                            validSquares.Add(newSquare);
+                            return validSquares;
+                        }
+                    }
+
+                    validSquares.Clear();
+                    // bottom-left
+                    temp = piece.Coordinates;
+                    while (temp.y > 1 && temp.x > 1) {
+
+                        temp.y--; temp.x--;
+                        var next = Board.Instance.Squares.Where(x => x.Coordinates == temp);
+                        if (next.Count() == 0) break;
+                        var newSquare = next.Single();
+
+                        if (newSquare.CurrentSubscriber == null) {
+
+                            validSquares.Add(newSquare);
+                            continue;
+                        } 
+                        
+                        else if (newSquare.CurrentSubscriber != null && newSquare.CurrentSubscriber != target.CurrentSubscriber) {
+
+                            break;
+                        }
+
+                        if (newSquare == target) {
+
+                            validSquares.Add(newSquare);
+                            return validSquares;
+                        }
+                    }
+
+                }
+
+                else if (piece.GetType() == typeof(Knight)) {
+
+                }
+
+                else if (piece.GetType() == typeof(Rook)) {
+
+                }
+
+                else if (piece.GetType() == typeof(Queen)) {
+
+                }
+
+                else if (piece.GetType() == typeof(Pawn)) {
+
+                }
+
+                return validSquares;
+            }
+        }
+
     }
 }
