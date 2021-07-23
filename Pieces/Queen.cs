@@ -27,11 +27,5 @@ namespace MauriceKoenig.ChessGame
             Resources.Load<Sprite>("Sprites/black_queen");
         }
 
-        private void Update() {
-
-            if (Input.GetKeyDown(KeyCode.P))
-            Board.Instance.PieceIsPinned(this);
-
-        }
     }
 }
